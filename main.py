@@ -5,33 +5,35 @@ class Board:
     def __init__(self, size, open_square):
         self.size = size
         self.open_square = open_square
-        self.square = []
-        for y in range(self.size):
-            self.square.append([open_square])
-            for x in range(self.size - 1):
-                self.square[y].append(open_square)
+        # set empty board
+        self.square = [[open_square for y in range(self.size)]for x in range(self.size)]
+        # self.square = []
+        # for y in range(self.size):
+        #     self.square.append([open_square])
+        #     for x in range(self.size - 1):
+        #         self.square[y].append(open_square)
         self.x_coord_dict = {}
         self.y_coord_dict = {}
         n = self.size
-        for i in range(self.size):
-            self.x_coord_dict.update({string.ascii_uppercase[i]: i})
-            self.y_coord_dict.update({i + 1: n - 1})
+        for dic_name in range(self.size):
+            self.x_coord_dict.update({string.ascii_uppercase[dic_name]: dic_name})
+            self.y_coord_dict.update({dic_name + 1: n - 1})
             n -= 1
 
     def show(self):
         print(end='   ')
-        for i in string.ascii_uppercase[:self.size]:
-            print(i, end=' ')
-        i = self.size
+        for coord_name in string.ascii_uppercase[:self.size]:
+            print(coord_name, end=' ')
+        coord_name = self.size
         for y in range(len(self.square)):
-            print('\n', i, end=' ')
+            print('\n', coord_name, end=' ')
             for x in range(len(self.square[y])):
                 print(self.square[x][y], end=' ')
-            print(i, end='')
-            i -= 1
+            print(coord_name, end='')
+            coord_name -= 1
         print(end='\n   ')
-        for i in string.ascii_uppercase[:self.size]:
-            print(i, end=' ')
+        for coord_name in string.ascii_uppercase[:self.size]:
+            print(coord_name, end=' ')
         print()
 
 
@@ -74,33 +76,33 @@ class CheckersPiece(GamePiece):
         self.move_range = []
 
         # get move range only for spaces on the board and open
-        for i in self.moves:
-            temp_x = i[0] + self.coords[0]
-            temp_y = i[1] + self.coords[1]
+        for move in self.moves:
+            temp_x = move[0] + self.coords[0]
+            temp_y = move[1] + self.coords[1]
             if 0 <= temp_x < self.board.size and 0 <= temp_y < self.board.size:
                 if self.board.square[temp_x][temp_y] == self.board.open_square:
                     self.move_range.append((temp_x, temp_y))
         # check for possible remaining combos (self - self - open, self - open - open, self - other - open)
-        for i in self.move_range[:]:
-            if abs(i[0] - self.coords[0]) == 2:
-                mid_coord_x = int(self.coords[0] / 2 + i[0] / 2)
-                mid_coord_y = int(self.coords[1] / 2 + i[1] / 2)
+        for move in self.move_range[:]:
+            if abs(move[0] - self.coords[0]) == 2:
+                mid_coord_x = int(self.coords[0] / 2 + move[0] / 2)
+                mid_coord_y = int(self.coords[1] / 2 + move[1] / 2)
                 mid_coords = (mid_coord_x, mid_coord_y)
                 if self.board.square[mid_coord_x][mid_coord_y] == self.board.open_square:
-                    self.move_range.remove(i)
+                    self.move_range.remove(move)
                 elif self.color == 'black':
                     for o in black_pawn:
                         if mid_coords == o.coords:
-                            self.move_range.remove(i)
+                            self.move_range.remove(move)
                 elif self.color == 'red':
                     for o in red_pawn:
                         if mid_coords == o.coords:
-                            self.move_range.remove(i)
+                            self.move_range.remove(move)
         # piece must jump if able
         jump_move = []
-        for i in self.move_range[:]:
-            if abs(i[0] - self.coords[0]) == 2:
-                jump_move.append(i)
+        for move in self.move_range[:]:
+            if abs(move[0] - self.coords[0]) == 2:
+                jump_move.append(move)
         if jump_move:
             self.move_range = jump_move
 
@@ -133,7 +135,7 @@ def turn_start(color):
 
 def get_user_piece():
     user_x, user_y = get_user_coords()
-    print(user_x, user_y)
+    #print(user_x, user_y)
     if checker_board.square[user_x][user_y] == checker_board.open_square:
         print("That's an empty spot")
     elif checker_board.square[user_x][user_y].color != turn:
@@ -247,3 +249,6 @@ elif black_pawn:
            * BLACK WINS! *
            ***************'''
     )
+else:
+    while True:
+        print("********ERROR********")
